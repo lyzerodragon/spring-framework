@@ -21,6 +21,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
 
 /**
+ *
  * The root interface for accessing a Spring bean container.
  *
  * <p>This is the basic client view of a bean container;
@@ -67,6 +68,24 @@ import org.springframework.lang.Nullable;
  * <p>Bean factory implementations should support the standard bean lifecycle interfaces
  * as far as possible. The full set of initialization methods and their standard order is:
  * <ol>
+ *
+ * 用于访问 Spring bean 容器的根接口。
+ * 这是 bean 容器的基本客户端视图；
+ * 进一步的接口，如ListableBeanFactory和org.springframework.beans.factory.config.ConfigurableBeanFactory可用于特定目的。
+ * 该接口由包含多个 bean 定义的对象实现，每个 bean 定义由一个字符串名称唯一标识。
+ * 根据 bean 定义，工厂将返回包含对象的独立实例（原型设计模式）或单个共享实例（Singleton 设计模式的高级替代方案，其中实例是范围内的单例厂）。
+ * 将返回哪种类型的实例取决于 bean 工厂配置：API 是相同的。
+ * 从 Spring 2.0 开始，根据具体的应用程序上下文（例如 Web 环境中的“请求”和“会话”范围），可以使用更多范围。
+ * 这种方法的要点是 BeanFactory 是应用程序组件的中央注册表，并且集中了应用程序组件的配置（例如，单个对象不再需要读取属性文件）。
+ * 请参阅“专家一对一 J2EE 设计和开发”的第 4 章和第 11 章，了解有关这种方法的好处的讨论。
+ * 请注意，通常最好依靠依赖注入（“推”配置）通过设置器或构造函数来配置应用程序对象，而不是使用任何形式的“拉”配置，如 BeanFactory 查找。
+ * Spring 的依赖注入功能是使用这个 BeanFactory 接口及其子接口实现的。
+ * 通常 BeanFactory 将加载存储在配置源（例如 XML 文档）中的 bean 定义，并使用org.springframework.beans包来配置 beans。
+ * 但是，实现可以简单地返回它根据需要直接在 Java 代码中创建的 Java 对象。
+ * 对于如何存储定义没有限制：LDAP、RDBMS、XML、属性文件等。鼓励实现支持 bean 之间的引用（依赖注入）。
+ * 与ListableBeanFactory中的方法相反，此接口中的所有操作还将检查父工厂是否为HierarchicalBeanFactory 。
+ * 如果在此工厂实例中未找到 bean，将询问直接父工厂。这个工厂实例中的 beans 应该覆盖任何父工厂中的同名 beans。
+ * Bean 工厂实现应尽可能支持标准的 bean 生命周期接口。全套初始化方法及其标准顺序是：
  * <li>BeanNameAware's {@code setBeanName}
  * <li>BeanClassLoaderAware's {@code setBeanClassLoader}
  * <li>BeanFactoryAware's {@code setBeanFactory}
@@ -94,6 +113,7 @@ import org.springframework.lang.Nullable;
  * <li>DisposableBean's {@code destroy}
  * <li>a custom {@code destroy-method} definition
  * </ol>
+ *
  *
  * @author Rod Johnson
  * @author Juergen Hoeller

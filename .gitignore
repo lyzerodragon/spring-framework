@@ -21,6 +21,7 @@ derby.log
 /build
 buildSrc/build
 /spring-*/build
+demo/build
 /framework-bom/build
 /framework-docs/build
 /integration-tests/build

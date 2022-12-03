@@ -48,6 +48,7 @@ import org.springframework.core.AliasRegistry;
 public interface BeanDefinitionRegistry extends AliasRegistry {
 
 	/**
+	 * 向这个注册表注册一个新的 bean 定义。必须支持 RootBeanDefinition 和 ChildBeanDefinition。
 	 * Register a new bean definition with this registry.
 	 * Must support RootBeanDefinition and ChildBeanDefinition.
 	 * @param beanName the name of the bean instance to register

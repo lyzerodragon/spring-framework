@@ -58,3 +58,4 @@ settings.gradle.projectsLoaded {
 		}
 	}
 }
+include 'demo'

@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 import org.springframework.lang.Nullable;
 
 /**
+ *
  * Step recording metrics about a particular phase or action happening during the {@link ApplicationStartup}.
  *
  * <p>The lifecycle of a {@code StartupStep} goes as follows:
