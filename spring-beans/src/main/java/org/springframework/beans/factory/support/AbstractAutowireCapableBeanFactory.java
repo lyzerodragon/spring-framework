@@ -487,6 +487,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 		RootBeanDefinition mbdToUse = mbd;
 
+		// 为指定的 bean 定义解析 bean 类，将 bean 类名解析为 Class 引用（如果需要）并将解析后的 Class 存储在 bean 定义中以供进一步使用。
 		// Make sure bean class is actually resolved at this point, and
 		// clone the bean definition in case of a dynamically resolved Class
 		// which cannot be stored in the shared merged bean definition.
@@ -506,6 +507,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		try {
+			// 让 BeanPostProcessors 有机会返回一个代理而不是目标 bean 实例。
+			// 第一次调用 Bean的 后置处理器
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {

@@ -74,14 +74,32 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	private static final int SUPPRESSED_EXCEPTIONS_LIMIT = 100;
 
 
-	/** Cache of singleton objects: bean name to bean instance. */
+	/**
+	 * 一级缓存-singletonObjects是用来存放就绪状态的Bean。
+	 * 保存在该缓存中的Bean所实现Aware子接口的方法已经回调完毕，
+	 * 自定义初始化方法已经执行完毕，
+	 * 也经过BeanPostProcessor实现类的postProcessorBeforeInitialization、postProcessorAfterInitialization方法处理；
+	 * Cache of singleton objects: bean name to bean instance.
+	 * */
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
-
-	/** Cache of singleton factories: bean name to ObjectFactory. */
-	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
-
-	/** Cache of early singleton objects: bean name to bean instance. */
+	/**
+	 * 二级缓存-earlySingletonObjects是用来存放早期曝光的Bean，
+	 * 一般只有处于循环引用状态的Bean才会被保存在该缓存中。
+	 * 保存在该缓存中的Bean所实现Aware子接口的方法还未回调，
+	 * 自定义初始化方法未执行，
+	 * 也未经过BeanPostProcessor实现类的postProcessorBeforeInitialization、postProcessorAfterInitialization方法处理。
+	 * 如果启用了Spring AOP，并且处于切点表达式处理范围之内，那么会被增强，即创建其代理对象。
+	 * Cache of early singleton objects: bean name to bean instance.
+	 * */
 	private final Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(16);
+
+
+	/**
+	 * 三级缓存-singletonFactories是用来存放创建用于获取Bean的工厂类-ObjectFactory实例。
+	 * 在IoC容器中，所有刚被创建出来的Bean，默认都会保存到该缓存中。
+	 *  Cache of singleton factories: bean name to ObjectFactory.
+	 * */
+	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
 	/** Set of registered singletons, containing the bean names in registration order. */
 	private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
@@ -179,8 +197,11 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		// Quick check for existing instance without full singleton lock
+		// 从一级缓存中读取Bean
 		Object singletonObject = this.singletonObjects.get(beanName);
+		// 锁定正在创建的Bean 解决循环依赖问题
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+			// 从二级缓存中读取Bean
 			singletonObject = this.earlySingletonObjects.get(beanName);
 			if (singletonObject == null && allowEarlyReference) {
 				synchronized (this.singletonObjects) {
@@ -189,6 +210,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					if (singletonObject == null) {
 						singletonObject = this.earlySingletonObjects.get(beanName);
 						if (singletonObject == null) {
+							// 从三级缓存中读取Bena
 							ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 							if (singletonFactory != null) {
 								singletonObject = singletonFactory.getObject();

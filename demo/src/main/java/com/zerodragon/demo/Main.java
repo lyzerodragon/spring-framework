@@ -4,6 +4,7 @@ import com.zerodragon.demo.bean.Cat;
 import com.zerodragon.demo.config.AnnotationConfig;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * 类声明:&nbsp;
@@ -16,5 +17,8 @@ public class Main {
 		ApplicationContext context = new AnnotationConfigApplicationContext(AnnotationConfig.class);
 		Cat cat = context.getBean(Cat.class);
 		System.out.println(cat);
+
+		ApplicationContext xmlContext = new ClassPathXmlApplicationContext("");
+		xmlContext.getBean(Cat.class);
 	}
 }
