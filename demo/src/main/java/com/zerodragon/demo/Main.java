@@ -17,8 +17,5 @@ public class Main {
 		ApplicationContext context = new AnnotationConfigApplicationContext(AnnotationConfig.class);
 		Cat cat = context.getBean(Cat.class);
 		System.out.println(cat);
-
-		ApplicationContext xmlContext = new ClassPathXmlApplicationContext("");
-		xmlContext.getBean(Cat.class);
 	}
 }

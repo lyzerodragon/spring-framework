@@ -61,6 +61,7 @@ import org.springframework.util.ClassUtils;
 public abstract class AnnotationConfigUtils {
 
 	/**
+	 * 内部管理的 Configuration 注释处理器的 bean 名称。
 	 * The bean name of the internally managed Configuration annotation processor.
 	 */
 	public static final String CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME =
