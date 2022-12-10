@@ -1,7 +1,5 @@
 package com.zerodragon.demo.bean;
 
-import org.springframework.context.annotation.Bean;
-
 /**
  * 类声明:&nbsp;
  *
@@ -19,5 +17,13 @@ public class Cat {
 	public Cat setName(String name) {
 		this.name = name;
 		return this;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
 	}
 }

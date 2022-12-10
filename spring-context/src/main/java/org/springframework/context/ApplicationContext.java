@@ -90,16 +90,7 @@ public interface ApplicationContext extends EnvironmentCapable, ListableBeanFact
 	ApplicationContext getParent();
 
 	/**
-	 * 为此上下文公开 AutowireCapableBeanFactory 功能。
-	 * <p>这通常不被应用程序代码使用，除非是为了初始化位于应用程序上下文之外的 bean 实例，
-	 * 将 Spring bean 生命周期（全部或部分）应用于它们。
-	 * <p>或者，{@link ConfigurableApplicationContext}
-	 * 接口公开的内部 BeanFactory 也提供对 {@link AutowireCapableBeanFactory} 接口的访问。
-	 * 本方法主要用作 ApplicationContext 接口上的一种方便、特定的工具。
-	 * <p><b>注意：从 4.2 开始，此方法将在应用程序上下文关闭后始终抛出 IllegalStateException。
-	 * 在当前的 Spring Framework 版本中，只有可刷新的应用程序上下文才会这样；
-	 * 从 4.2 开始，所有应用程序上下文实现都需要遵守。
-	 * <p>
+	 * 自动装配Bean
 	 * Expose AutowireCapableBeanFactory functionality for this context.
 	 * <p>This is not typically used by application code, except for the purpose of
 	 * initializing bean instances that live outside the application context,
