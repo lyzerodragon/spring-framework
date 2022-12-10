@@ -52,14 +52,14 @@ public interface ApplicationContext extends EnvironmentCapable, ListableBeanFact
 
 	/**
 	 * 返回此应用程序上下文的唯一 ID。
-	 * @return 上下文的唯一标识，或 {@code null} 如果没有
+	 * @return 上下文的唯一标识，或 {@code null} 如果没有。
 	 */
 	@Nullable
 	String getId();
 
 	/**
 	 * 返回此上下文所属的已部署应用程序的名称。
-	 * @return 已部署应用程序的名称，或默认为空字符串
+	 * @return 已部署应用程序的名称，或默认为空字符串。
 	 */
 	String getApplicationName();
 
@@ -97,7 +97,7 @@ public interface ApplicationContext extends EnvironmentCapable, ListableBeanFact
 	 * 接口公开的内部 BeanFactory 也提供对 {@link AutowireCapableBeanFactory} 接口的访问。
 	 * 本方法主要用作 ApplicationContext 接口上的一种方便、特定的工具。
 	 * <p><b>注意：从 4.2 开始，此方法将在应用程序上下文关闭后始终抛出 IllegalStateException。
-	 * <b>在当前的 Spring Framework 版本中，只有可刷新的应用程序上下文才会这样；
+	 * 在当前的 Spring Framework 版本中，只有可刷新的应用程序上下文才会这样；
 	 * 从 4.2 开始，所有应用程序上下文实现都需要遵守。
 	 * <p>
 	 * Expose AutowireCapableBeanFactory functionality for this context.
