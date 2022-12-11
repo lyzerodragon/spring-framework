@@ -76,6 +76,9 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 
 		createAnnotatedBeanDefReader.end();
 		// 创建一个Bean定义的路径扫描器
+		// 此扫描器是给开发者自己调用的扫描器 如: context.scan(String package);
+		// 此扫描器并不参与 包扫描
+		// 包扫描是在 org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass:296
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 
