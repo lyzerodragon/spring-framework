@@ -902,23 +902,29 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			logger.trace("Pre-instantiating singletons in " + this);
 		}
 
+		// this.beanDefinitionNames 中保存了所有 Bean 的 BeanDefinition 名称
 		// Iterate over a copy to allow for init methods which in turn register new bean definitions.
 		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
+		// 触发所有非懒加载单例 bean 的初始化...
 		// Trigger initialization of all non-lazy singleton beans...
 		for (String beanName : beanNames) {
+			// 合并父 bean 中的配置 <bean ... parent="xxx"> 的 parent
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
-			// BeanDefinition 不能是 抽象的 ， 是单例的，不能是按需(延迟)加载的
+			// BeanDefinition 不能是 抽象的 ， 是单例的，不能是按需(延迟|懒)加载的
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
 				// 确定具有给定名称的 bean 是否为 FactoryBean。
 				if (isFactoryBean(beanName)) {
+					// FactoryBean 需要在 beanName 前面加上 '&' 符号
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
+					// 判断当前 FactoryBean 是否是 SmartFactoryBean 的实现 并且 是否需要优先初始化，默认是 false
 					if (bean instanceof SmartFactoryBean<?> smartFactoryBean && smartFactoryBean.isEagerInit()) {
 						getBean(beanName);
 					}
 				}
 				else {
+					// 普通 Bean 直接调用 getBean 进行初始化
 					getBean(beanName);
 				}
 			}

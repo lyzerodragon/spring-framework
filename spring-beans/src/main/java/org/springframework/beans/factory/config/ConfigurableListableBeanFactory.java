@@ -16,12 +16,12 @@
 
 package org.springframework.beans.factory.config;
 
-import java.util.Iterator;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.lang.Nullable;
+
+import java.util.Iterator;
 
 /**
  * Configuration interface to be implemented by most listable bean factories.
@@ -50,6 +50,8 @@ public interface ConfigurableListableBeanFactory
 	void ignoreDependencyType(Class<?> type);
 
 	/**
+	 * 自动装配时会忽略该 Class
+	 * spring中用来忽略某些 Aware 的实现
 	 * Ignore the given dependency interface for autowiring.
 	 * <p>This will typically be used by application contexts to register
 	 * dependencies that are resolved in other ways, like BeanFactory through
