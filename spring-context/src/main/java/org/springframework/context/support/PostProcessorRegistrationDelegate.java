@@ -241,6 +241,10 @@ final class PostProcessorRegistrationDelegate {
 	public static void registerBeanPostProcessors(
 			ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext) {
 
+		// 警告：虽然看起来可以很容易地重构此方法的主体以避免使用多个循环和多个列表，但使用多个列表和多次传递处理器名称是有意的。
+		// 我们必须确保我们遵守 PriorityOrdered 和 Ordered 处理器的合同。
+		// 具体来说，我们不得导致处理器被实例化（通过 getBean() 调用）或以错误的顺序在 ApplicationContext 中注册。
+		// 在提交更改此方法的拉取请求 (PR) 之前，请查看所有涉及 PostProcessorRegistrationDelegate 更改的拒绝 PR 的列表，以确保您的提案不会导致重大更改：
 		// WARNING: Although it may appear that the body of this method can be easily
 		// refactored to avoid the use of multiple loops and multiple lists, the use
 		// of multiple lists and multiple passes over the names of processors is
