@@ -664,6 +664,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
 //		关闭旧的 BeanFactory (如果有)，创建新的 BeanFactory，加载 Bean 定义、注册 Bean 等等
+		// 只有使用 ClassPathXmlApplicationContext 的方式创建的 ApplicationContext 才会执行 org.springframework.context.support.AbstractRefreshableApplicationContext.refreshBeanFactory
+		// 而 AnnotationConfigApplicationContext 执行的是 org.springframework.context.support.GenericApplicationContext.refreshBeanFactory 空方法体
 		refreshBeanFactory();
 //		返回刚刚创建的 BeanFactory
 		return getBeanFactory();

@@ -40,6 +40,8 @@ import org.springframework.lang.Nullable;
  */
 public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 
+	// 以下两种是 Spring 的 Bean 范围标识符 只有单例和多例两种
+	// request, session, globalSession, application, websocket 这几种是基于 web 扩展的
 	/**
 	 * Scope identifier for the standard singleton scope: {@value}.
 	 * <p>Note that extended bean factories might support further scopes.
