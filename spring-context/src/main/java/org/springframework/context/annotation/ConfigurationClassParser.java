@@ -132,6 +132,7 @@ class ConfigurationClassParser {
 		this.propertySourceRegistry = (this.environment instanceof ConfigurableEnvironment ce ?
 				new PropertySourceRegistry(new PropertySourceProcessor(ce, this.resourceLoader)) : null);
 		this.registry = registry;
+		// 初始化一个 Bean 的扫描器
 		this.componentScanParser = new ComponentScanAnnotationParser(
 				environment, resourceLoader, componentScanBeanNameGenerator, registry);
 		this.conditionEvaluator = new ConditionEvaluator(registry, environment, resourceLoader);

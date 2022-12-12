@@ -1,0 +1,83 @@
+AnnotationConfigApplicationContext
+    this(); 创建一个新的注解式配置应用程序上下文
+        -> 父类构造
+        this.beanFactory = new DefaultListableBeanFactory(); 初始化 beanFactory
+        -> this构造
+        this.reader = new AnnotatedBeanDefinitionReader(this); 创建一个注解式 Bean 定义读取器
+        this.scanner = new ClassPathBeanDefinitionScanner(this); 
+            创建一个 BeanDefinition 扫描器，这个扫描器并不会参与 Bean 的包路径扫描。
+            而是让调用者手动调用的一个扫描器 -> context.scan(String package);org.springframework.context.annotation.AnnotationConfigApplicationContext.scan
+            扫描 Bean 的扫描器是在 -> org.springframework.context.annotation.ConfigurationClassParser(MetadataReaderFactory metadataReaderFactory,
+			     ProblemReporter problemReporter, Environment environment, ResourceLoader resourceLoader,
+			     BeanNameGenerator componentScanBeanNameGenerator, BeanDefinitionRegistry registry) 初始化的
+
+    register(componentClasses); 注册配置类
+        this.reader.register(componentClasses); 使用构造方法初始化的 BeanDefinitionReader 来读取配置类
+            registerBean(componentClass);
+                doRegisterBean(beanClass, null, null, null, null);
+                    BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry); 注册 Bean 定义
+                        registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
+                            beanDefinition = this.beanDefinitionMap.get(beanName)
+                                如果有就覆盖：(existingDefinition != null){this.beanDefinitionMap.put(beanName, beanDefinition)}
+                                没有就添加到 beanDefinitionMap 中：this.beanDefinitionMap.put(beanName, beanDefinition);this.beanDefinitionNames.add(beanName);
+
+    refresh(); IOC容器刷新接口
+        prepareRefresh(); 准备此上下文以进行刷新、设置其启动日期和活动标志以及执行属性源的任何初始化
+        ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+            refreshBeanFactory(); 刷新 BeanFactory ，ClassPathXmlApplicationContext 的是有一系列的判断加初始化，而 AnnotationConfigApplicationContext 是只有赋值初始化序列Id
+            getBeanFactory(); 这里获取的 BeanFactory 是在 this() 中的 GenericApplicationContext 父类初始化的 DefaultListableBeanFactory 
+        prepareBeanFactory(beanFactory); 设置 BeanFactory 的类加载器，添加几个 BeanPostProcessor，手动注册几个特殊的 bean 
+            beanFactory.setBeanClassLoader(getClassLoader()); 设置当前 ApplicationContext 的类加载器为 beanFactory 的 Bean 的类加载器
+            beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader())); 设置 Bean 表达式解析器
+            beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment())); 设置资源编辑器注册器
+            beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this)); 添加一个 BeanPostProcessor 此 BeanPostProcessor 可以帮助我们获取 ApplicationContext 
+            beanFactory.ignoreDependencyInterface(Class<?> ifc);配置了7个忽略依赖接口，如果某个 Bean 实现这些忽略的接口，在自动装配的时候忽略这些 Bean 
+            beanFactory.registerResolvableDependency(Class<?> dependencyType, @Nullable Object autowiredValue); 如果 Bean 在自动装配的时候有使用这些类(dependencyType)的自动装配类型则会注入这些类  autowiredValue 
+            beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this)); 注册时间监听器：在 Bean 实例化后如果该 Bean 是 ApplicationListener 的子类，就将其添加到 listener 列表中。
+            beanFactory.registerSingleton(String beanName, Object singletonObject); 注册了一些运行环境参数。
+        postProcessBeanFactory(beanFactory); 允许在上下文子类中对 bean 工厂进行后置处理。 这里 AnnotationConfigApplicationContext 并没有实现，默认是空方法体。
+        invokeBeanFactoryPostProcessors(beanFactory); 调用 BeanFactoryPostProcessor 各个实现类的 postProcessBeanFactory(factory) 回调方法,并且在里面会判断 Bean 是否为配置类然后做配置类的解析
+            PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors()); 调用 Bean 工厂后期处理器
+                registryProcessor.postProcessBeanDefinitionRegistry(registry); 注册 Bean 的后置处理器
+                    processConfigBeanDefinitions(registry); 解析配置类(@Configuration)的 BeanDefinition
+                    ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory) 标记和判断是否为配置类
+                    parser = new ConfigurationClassParser(this.metadataReaderFactory, this.problemReporter, this.environment,this.resourceLoader, this.componentScanBeanNameGenerator, registry) 初始化 ConfigurationClassParser 并且把 componentScanParser扫描器也初始化
+                    parser.parse(candidates); 解析配置类
+                        parse(bd.getBeanClassName(), holder.getBeanName()); 
+                            processConfigurationClass(new ConfigurationClass(reader, beanName), DEFAULT_EXCLUSION_FILTER);
+                                doProcessConfigurationClass(configClass, sourceClass, filter); 真正地处理配置里解析
+                                    processMemberClasses(configClass, sourceClass, filter);  处理 @Component 注解
+                                    this.propertySourceRegistry.processPropertySource(propertySource); 处理 @PropertySource 注解
+                                    this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName()); 处理 @ComponentScans,@ComponentScan 注解
+                                        scanner = new ClassPathBeanDefinitionScanner(this.registry,componentScan.getBoolean("useDefaultFilters"), this.environment, this.resourceLoader); 类路径 Bean 定义扫描器
+                                        ... 处理各种定义 @ComponentScan 参数，如：excludeFilters,includeFilters,basePackages
+                                        scanner.doScan(StringUtils.toStringArray(basePackages)); 扫描已经处理好的包路径数组集合
+                                            candidates = findCandidateComponents(basePackage); 找到所有候选的 带有 @Component 注解的 BeanDefinition
+                                            candidates.for:definitionHolder  registerBeanDefinition(definitionHolder, this.registry); 循环把解析出来的 BeanDefinitionHolder 注册到 IOC 容器
+                                    processImports(configClass, sourceClass, getImports(sourceClass), filter, true); 处理 @Import 注解
+                                    resolvedResource = this.environment.resolveRequiredPlaceholders(resource); configClass.addImportedResource(resolvedResource, readerClass);  处理 @ImportResource 注解
+                                    retrieveBeanMethodMetadata(sourceClass); 处理 @Bean 注解
+                                    processInterfaces(configClass, sourceClass); 处理接口的默认方法
+                                        processInterfaces(configClass, ifc); 递归处理配置类实现的接口上注册默认方法
+                registryProcessors.add(registryProcessor); 把后置处理器添加到待注册集合
+                ~~~ 以下四步是按照 PriorityOrdered Ordered 其他剩余的 BeanDefinitionRegistryPostProcessor ~~~
+                sortPostProcessors(currentRegistryProcessors, beanFactory); 排序后置处理器
+                registryProcessors.addAll(currentRegistryProcessors); 把当前的处理器添加到总处理器中
+                invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry, beanFactory.getApplicationStartup()); 调用 Bean 定义注册表后处理器
+                    postProcessor.postProcessBeanDefinitionRegistry(registry); BeanDefinition 的后置处理器注册
+                        processConfigBeanDefinitions(registry); 解析配置类(@Configuration)的 BeanDefinition
+                currentRegistryProcessors.clear(); 调用后清空当前处理器
+                ~~~ 以下是按照 PriorityOrdered Ordered 其他剩余的 BeanDefinitionRegistryPostProcessor ~~~
+                invokeBeanFactoryPostProcessors(registryProcessors, beanFactory); 调用所有处理器的 postProcessBeanFactory 回调
+
+
+
+
+        registerBeanPostProcessors(beanFactory);
+        initMessageSource();
+        initApplicationEventMulticaster();
+        onRefresh();
+        registerListeners();
+        finishBeanFactoryInitialization(beanFactory);
+        finishRefresh();
+        

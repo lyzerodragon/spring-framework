@@ -259,6 +259,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 
 			// typeCheckOnly 为 false，将当前 beanName 放入一个 alreadyCreated 的 Set 集合中。
+			// 将Bean标记为已创建
 			if (!typeCheckOnly) {
 				markBeanAsCreated(beanName);
 			}

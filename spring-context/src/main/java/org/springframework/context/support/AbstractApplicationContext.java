@@ -524,6 +524,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			// Prepare this context for refreshing.
 			prepareRefresh();
 
+			// Annotation: 主要调用的是 org.springframework.context.support.GenericApplicationContext
+			// Xml: 则调用的是 org.springframework.context.support.AbstractRefreshableApplicationContext
 			// 这里拿到的 beanFactory 是 实例化时调用父类的构造方法得来的获得的
 			// AnnotationConfigApplicationContext.AnnotationConfigApplicationContext()
 			// org.springframework.context.support.GenericApplicationContext.GenericApplicationContext()
@@ -670,7 +672,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
 //		关闭旧的 BeanFactory (如果有)，创建新的 BeanFactory，加载 Bean 定义、注册 Bean 等等
 		// 只有使用 ClassPathXmlApplicationContext 的方式创建的 ApplicationContext 才会执行 org.springframework.context.support.AbstractRefreshableApplicationContext.refreshBeanFactory
-		// 而 AnnotationConfigApplicationContext 执行的是 org.springframework.context.support.GenericApplicationContext.refreshBeanFactory 空方法体
+		// 而 AnnotationConfigApplicationContext 执行的是 org.springframework.context.support.GenericApplicationContext.refreshBeanFactory 只有初始化序列id
 		refreshBeanFactory();
 //		返回刚刚创建的 BeanFactory
 		return getBeanFactory();
@@ -902,7 +904,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * initializing all remaining singleton beans.
 	 */
 	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
-		// 首先会判断是否有一个名称为 '' 的 Bean 如果有就优先在 beanFactory.getBean 中初始化此类
+		// 首先会判断是否有一个名称为 'conversionService' 的 Bean 如果有就优先在 beanFactory.getBean 中初始化此类
 		// 并且将其放到 ApplicationContext 中提供属性值转换服务
 		// Initialize conversion service for this context.
 		if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
