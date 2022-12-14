@@ -16,10 +16,10 @@
 
 package org.springframework.aop.framework;
 
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.util.Assert;
 
 /**
  * Base class for proxy factories.
@@ -44,6 +44,7 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 	 * Create a new ProxyCreatorSupport instance.
 	 */
 	public ProxyCreatorSupport() {
+		// 创建 AopProxy 之前先创建一个 AopProxyFactory 的实例
 		this.aopProxyFactory = new DefaultAopProxyFactory();
 	}
 

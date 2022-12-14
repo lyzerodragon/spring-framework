@@ -12,6 +12,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  **/
 public class AopMain {
 	public static void main(String[] args) {
+		xmlApplicationContext();
+	}
+
+	public static void xmlApplicationContext (){
 		ClassPathXmlApplicationContext xmlContext = new ClassPathXmlApplicationContext("classpath:springConfig.xml");
 		MessageService messageService = xmlContext.getBean(MessageService.class);
 		messageService.infoMessage();
