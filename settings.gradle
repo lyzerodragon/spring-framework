@@ -58,4 +58,6 @@ settings.gradle.projectsLoaded {
 		}
 	}
 }
-include 'demo'
+include 'demo-ioc'
+include 'demo-aop'
+
