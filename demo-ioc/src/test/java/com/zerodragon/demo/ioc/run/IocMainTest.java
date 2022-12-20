@@ -27,37 +27,38 @@ public class IocMainTest {
 	 * 注解配置应用程序上下文
 	 */
 	@Test
-	void annotationConfigApplicationContext(){
+	void annotationConfigApplicationContext() {
 		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AnnotationConfig.class);
 		Cat cat = applicationContext.getBean(Cat.class);
 		Cat cat2 = applicationContext.getBean(Cat.class);
 		cat.setAge(18);
-		log.info("cat.age:{}",cat2.getAge());
+		log.info("cat.age:{}", cat2.getAge());
 	}
 
 	/**
 	 * xml应用程序上下文类路径
 	 */
 	@Test
-	void classPathXmlApplicationContext(){
+	void classPathXmlApplicationContext() {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath:springConfig.xml");
 		MessageService messageService = context.getBean(MessageService.class);
-		log.info("messageService:{}",messageService.getMessage());
+		log.info("messageService:{}", messageService.getMessage());
 	}
 
 	/**
+	 * 手动注册 Bean
 	 * bean工厂注册bean定义
 	 */
 	@Test
-	void beanFactoryRegisterBeanDefinition(){
+	void beanFactoryRegisterBeanDefinition() {
 		RootBeanDefinition rootBeanDefinition = new RootBeanDefinition(MessageServiceImpl.class);
-		final String messageServiceBeanName = "messageService" ;
+		final String messageServiceBeanName = "messageService";
 
 		DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
-		beanFactory.registerBeanDefinition(messageServiceBeanName,rootBeanDefinition);
+		beanFactory.registerBeanDefinition(messageServiceBeanName, rootBeanDefinition);
 		MessageService messageService = beanFactory.getBean(messageServiceBeanName, MessageService.class);
-		Assert.notNull(messageService,"手动注入失败");
-		log.info("messageService.message:{}",messageService.getMessage());
+		Assert.notNull(messageService, "手动注入失败");
+		log.info("messageService.message:{}", messageService.getMessage());
 	}
 }
