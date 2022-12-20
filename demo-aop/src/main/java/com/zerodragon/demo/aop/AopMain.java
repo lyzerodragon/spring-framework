@@ -12,7 +12,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  **/
 public class AopMain {
 	public static void main(String[] args) {
-		xmlApplicationContext();
+//		xmlApplicationContext();
+		annotationConfigApplicationContext();
 	}
 
 	public static void xmlApplicationContext (){
