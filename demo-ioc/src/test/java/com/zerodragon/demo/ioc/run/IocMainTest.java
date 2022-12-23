@@ -33,6 +33,8 @@ public class IocMainTest {
 		Cat cat2 = applicationContext.getBean(Cat.class);
 		cat.setAge(18);
 		log.info("cat.age:{}", cat2.getAge());
+		log.info(cat);
+		log.info(cat2);
 	}
 
 	/**
