@@ -1,9 +1,9 @@
 package com.zerodragon.demo.ioc.bean.definition;
 
 import com.zerodragon.demo.ioc.bean.Cat;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
 /**
@@ -12,11 +12,11 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
  * @date : 2022/12/20-11:34
  **/
 public class BeanDefinitionTest {
-	public static final Logger logger = LogManager.getLogger(BeanDefinitionTest.class.getName());
+	public static final Logger log = LoggerFactory.getLogger(BeanDefinitionTest.class);
 
 	@Test
 	void beanDefinitionDiy(){
 		RootBeanDefinition rootBeanDefinition = new RootBeanDefinition(Cat.class);
-		logger.info("rootBeanDefinition->Cat.class:{}",rootBeanDefinition);
+		log.info("rootBeanDefinition->Cat.class:{}",rootBeanDefinition);
 	}
 }

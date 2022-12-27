@@ -5,9 +5,9 @@ import com.zerodragon.demo.AnnotationConfigApplicationContextUtil;
 import com.zerodragon.demo.transactional.config.JdbcConfig;
 import com.zerodragon.demo.transactional.dao.UserDao;
 import com.zerodragon.demo.transactional.entity.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -21,7 +21,7 @@ import java.util.List;
  **/
 public class CrudUserTest {
 
-	public static final Logger log = LogManager.getLogger(CrudUserTest.class.getName());
+	public static final Logger log = LoggerFactory.getLogger(CrudUserTest.class);
 
 	@Test
 	public void insertUserTest(){
