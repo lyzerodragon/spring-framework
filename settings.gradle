@@ -62,4 +62,5 @@ include 'demo-ioc'
 include 'demo-aop'
 include 'demo-listener'
 include 'demo-transactional'
+include 'demo-utils'
 

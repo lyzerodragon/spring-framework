@@ -1,5 +1,7 @@
 package com.zerodragon.demo.transactional;
 
+import com.alibaba.fastjson2.JSON;
+import com.zerodragon.demo.AnnotationConfigApplicationContextUtil;
 import com.zerodragon.demo.transactional.config.JdbcConfig;
 import com.zerodragon.demo.transactional.dao.UserDao;
 import com.zerodragon.demo.transactional.entity.User;
@@ -34,8 +36,23 @@ public class CrudUserTest {
 
 		Assert.isTrue(!CollectionUtils.isEmpty(users),"查询无数据");
 
-		log.info("users:{}",users);
+		log.info("users:{}", JSON.toJSONString(users));
+
+		applicationContext.close();
 
 	}
+
+	@Test
+	public void insertUserTestAndApplicationTest(){
+		AnnotationConfigApplicationContextUtil.run(JdbcConfig.class , applicationContext -> {
+			UserDao userDao = applicationContext.getBean(UserDao.class);
+			User u = new User("小明",18);
+			Assert.isTrue(userDao.insert(u)>0,"插入失败");
+			List<User> users = userDao.queryList();
+			Assert.isTrue(!CollectionUtils.isEmpty(users),"查询无数据");
+			log.info("users:{}", JSON.toJSONString(users));
+		});
+	}
+
 
 }

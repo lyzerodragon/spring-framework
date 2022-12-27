@@ -21,10 +21,14 @@ public class UserDao extends BaseDao<User, UserMapper> {
 		super(dataSource, jdbcTemplate);
 	}
 
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional(rollbackFor = {RuntimeException.class})
 	public int insert (User user){
 		final String sql = "insert into user (`name`,`age`) values (?,?)";
-		return jdbcTemplate.update(sql, user.getName(), user.getAge());
+		int insert = jdbcTemplate.update(sql, user.getName(), user.getAge());
+		if (insert == 1){
+			throw new RuntimeException();
+		}
+		return insert;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
