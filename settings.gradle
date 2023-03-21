@@ -1,5 +1,6 @@
 pluginManagement {
 	repositories {
+		maven { url "https://maven.aliyun.com/repository/public" } // 阿里云镜像仓库
 		mavenCentral()
 		gradlePluginPortal()
 		maven { url "https://repo.spring.io/release" }
@@ -40,8 +41,7 @@ include "framework-platform"
 include "integration-tests"
 
 rootProject.name = "spring"
-rootProject.children.each {project ->
-	project.buildFileName = "${project.name}.gradle"
+rootProject.children.each { project -> project.buildFileName = "${project.name}.gradle"
 }
 
 settings.gradle.projectsLoaded {
@@ -60,4 +60,5 @@ settings.gradle.projectsLoaded {
 }
 include 'demo-ioc'
 include 'demo-aop'
+include 'demo-web'
 
