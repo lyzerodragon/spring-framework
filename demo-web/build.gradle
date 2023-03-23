@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
-//    id 'war'
-     id 'org.gretty' version '4.0.3' // Gretty 插件，用于启动嵌入式 Tomcat
+    id 'war'
+//    id 'org.gretty' version '4.0.3' // Gretty 插件，用于启动嵌入式 Tomcat
 }
 
 group 'org.springframework'
@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    api(project ':spring-webmvc')
+    api(project(":spring-webmvc"))
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.2'
@@ -22,10 +22,5 @@ dependencies {
 
     api("jakarta.servlet:jakarta.servlet-api")
     api("jakarta.servlet.jsp:jakarta.servlet.jsp-api")
-    api("org.apache.tomcat.embed:tomcat-embed-core:10.1.1")
-}
-
-gretty {
-    servletContainer = 'tomcat10' // 设置嵌入式 Tomcat 版本
-    httpPort = 8080 // 设置 HTTP 端口号
+//    api("org.apache.tomcat.embed:tomcat-embed-core:10.1.1")
 }
