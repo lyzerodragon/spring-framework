@@ -1,5 +1,6 @@
 pluginManagement {
 	repositories {
+		maven { url "https://maven.aliyun.com/repository/public" } // 阿里云镜像仓库
 		mavenCentral()
 		gradlePluginPortal()
 		maven { url "https://repo.spring.io/release" }
@@ -63,4 +64,5 @@ include 'demo-aop'
 include 'demo-listener'
 include 'demo-transactional'
 include 'demo-utils'
+include 'demo-mvc'
 
