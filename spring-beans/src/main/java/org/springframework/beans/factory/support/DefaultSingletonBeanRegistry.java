@@ -193,6 +193,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 			// 从二级缓存中读取Bean
 			singletonObject = this.earlySingletonObjects.get(beanName);
 			if (singletonObject == null && allowEarlyReference) {
+				// 如果正常线程执行的从一二级缓存中都读取不到就加锁重新从一二三级缓存中读取
 				synchronized (this.singletonObjects) {
 					// Consistent creation of early reference within full singleton lock
 					singletonObject = this.singletonObjects.get(beanName);

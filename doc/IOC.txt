@@ -69,15 +69,43 @@ AnnotationConfigApplicationContext
                 currentRegistryProcessors.clear(); 调用后清空当前处理器
                 ~~~ 以下是按照 PriorityOrdered Ordered 其他剩余的 BeanDefinitionRegistryPostProcessor ~~~
                 invokeBeanFactoryPostProcessors(registryProcessors, beanFactory); 调用所有处理器的 postProcessBeanFactory 回调
-
-
-
-
-        registerBeanPostProcessors(beanFactory);
-        initMessageSource();
-        initApplicationEventMulticaster();
-        onRefresh();
-        registerListeners();
-        finishBeanFactoryInitialization(beanFactory);
+        registerBeanPostProcessors(beanFactory); 注册 BeanPostProcessor 的实现类。
+            PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this); 注册 Bean 后置处理器: BeanPostProcessorChecker,ApplicationListenerDetector
+        initMessageSource(); 初始化当前上下文的国际化
+            new DelegatingMessageSource(); 初始化的流程是使用一个新的 DelegatingMessageSource
+            beanFactory.registerSingleton(MESSAGE_SOURCE_BEAN_NAME, this.messageSource); 初始化 MessageSource 后就把该消息源注册到单例 Bean 
+        initApplicationEventMulticaster(); 为此上下文初始化事件多播器。 
+            new SimpleApplicationEventMulticaster(beanFactory); 初始化的流程是使用一个新的 SimpleApplicationEventMulticaster
+            beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.applicationEventMulticaster);  初始化 ApplicationEventMulticaster 后就把该时间多播器注册到单例 Bean  
+        onRefresh(); 在特定的上下文子类中初始化其他特殊 Bean 。在这里是空的方法体。具体实现看 web 。 
+        registerListeners(); 注册事件监听器，监听器需要实现 ApplicationListener 接口
+        finishBeanFactoryInitialization(beanFactory); 实例化所有剩余的（非懒加载初始化）单例 Bean。
+            beanFactory.getBean(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)); 优先初始化名称为 conversionService 的 ConversionService.class Bean
+            beanFactory.addEmbeddedValueResolver(strVal -> getEnvironment().resolvePlaceholders(strVal)); 添加属性值解析器到 beanFactory
+            beanFactory.freezeConfiguration(); 冻结所有 BeanDefinition 表明已注册的 beanDefinition 将不会被修改或进一步后处理。
+            beanFactory.preInstantiateSingletons(); 实例化所有剩余的（非懒加载初始化）单例。
+                getBean(beanName); 调用 getBean 进行初始化,如果是 FactoryBean 则需要加上前置符号 &
+                    doGetBean(name, null, null, false);
+                        getSingleton(beanName); 从缓存中读取单例 Bean
+                            getSingleton(beanName, true); 从一二三级缓存中读取Bean ： singletonObjects,earlySingletonObjects,singletonFactories
+                        getObjectForBeanInstance(sharedInstance, name, beanName, null); 读取得到就直接获取 Bean 的实例对象
+                        registerDependentBean(dep, beanName); 注册其依赖的 Bean
+                        getBean(dep); 初始化依赖的 Bean
+                        createBean(beanName, mbd, args); 创建 Bean
+                            resolveBeforeInstantiation(beanName, mbdToUse); 用 Bean的 后置处理器 让 InstantiationAwareBeanPostProcessor 在这一步有机会返回代理
+                            doCreateBean(beanName, mbdToUse, args); 创建 Bean
+                                createBeanInstance(beanName, mbd, args); 创建 Bean 的实例化
+                                    instantiateUsingFactoryMethod(beanName, mbd, args); 使用工厂方法实例化
+                                    autowireConstructor(beanName, mbd, null, null); 采用构造方法依赖注入
+                                    instantiateBean(beanName, mbd); 使用无参构造方法注入
+                                applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName); 调用 MergedBeanDefinitionPostProcessor 后置处理器回调
+                                earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences && isSingletonCurrentlyInCreation(beanName)); 是单例&&允许循环引用&&正在创建的
+                                addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean)); 如果有循环依赖就加到三级缓存里
+                                populateBean(beanName, mbd, instanceWrapper); 装配属性
+                                initializeBean(beanName, exposedObject, mbd); Bean 初始化后的各种回调 -> init-method,InitializingBean,BeanPostProcessor
+                                    invokeAwareMethods(beanName, bean); 调用 Aware 接口的回调: BeanFactoryAware,BeanClassLoaderAware,BeanNameAware
+                                    invokeInitMethods(beanName, wrappedBean, mbd); 调用初始化方法,处理Bean中定义的: init-method 或者实现了: InitializingBean.afterPropertiesSet
+                                    applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName); BeanPostProcessor 的 postProcessAfterInitialization 回调
+                        getObjectForBeanInstance(sharedInstance, name, beanName, mbd); 获取 Bean 实例对象
         finishRefresh();
         

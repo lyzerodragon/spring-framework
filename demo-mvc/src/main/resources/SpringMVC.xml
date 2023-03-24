@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!--开启注解扫描-->
+<!--	<context:component-scan base-package="com.zerodragon.demo" />-->
+	<bean id="/hello" class="com.zerodragon.demo.mvc.servlet.controller.HelloController"/>
+	<!-- Spring MVC视图解析 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property value="/WEB-INF/jsp/" name="prefix"/>
+		<property value=".jsp" name="suffix"/>
+	</bean>
+
+	<!-- Spring MVC文件上传配置 -->
+	<!--<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8"/>
+		<property name="maxUploadSize" value="52428800"/>
+		<property name="maxInMemorySize" value="50000"/>
+	</bean>-->
+</beans>
